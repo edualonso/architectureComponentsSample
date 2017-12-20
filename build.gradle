@@ -3,6 +3,7 @@ buildscript {
     ext {
         kotlin_version = '1.2.10'
         support_library = '26.1.0'
+        databinding_compiler = '3.0.1'
         constraint_layout = '1.0.2'
         junit = '4.12'
         android_test_runner = '1.0.1'
