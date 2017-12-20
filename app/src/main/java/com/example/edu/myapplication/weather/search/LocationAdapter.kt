@@ -14,11 +14,15 @@ import java.util.*
  */
 class LocationAdapter : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
+    private var goToLocation: ((location: Location) -> Unit) = {}
     private var locations: MutableList<Location> = ArrayList()
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         with(holder.locationItemBinding) {
-            name.text = locations[position].name
+            root.setOnClickListener {
+                goToLocation(locations[position])
+            }
+            name.text = locations[position].name + " with ID ${locations[position].id}"
         }
     }
 
@@ -39,6 +43,10 @@ class LocationAdapter : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>
             // TODO: use diffutil maybe?
             notifyDataSetChanged()
         }
+    }
+
+    fun setGoToLocation(goToLocation: ((location: Location) -> Unit)) {
+        this.goToLocation = goToLocation
     }
 
     class LocationViewHolder(val locationItemBinding: ViewLocationItemBinding) : RecyclerView.ViewHolder(locationItemBinding.root)

@@ -1,5 +1,6 @@
 package com.example.edu.myapplication.weather.api
 
+import com.example.edu.myapplication.weather.model.CurrentWeather
 import com.example.edu.myapplication.weather.model.Location
 import io.reactivex.Single
 import okhttp3.OkHttpClient
@@ -33,6 +34,12 @@ class WeatherApiClient {
 
     fun searchForLocation(location: String): Single<List<Location>> {
         return weatherService.searchForLocation(location)
+    }
+
+    fun getCurrentWeather(location: Location): Single<CurrentWeather> {
+        with(location) {
+            return weatherService.getCurrentWeather(WeatherService.getNameAndCoordinatesForQuery(name.substringBefore(","), lat, lon))
+        }
     }
 
     companion object {

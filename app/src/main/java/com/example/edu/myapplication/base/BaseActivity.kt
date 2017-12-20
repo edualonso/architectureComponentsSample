@@ -4,8 +4,10 @@ import android.arch.lifecycle.ViewModel
 import android.support.v7.app.AppCompatActivity
 
 
-abstract class BaseActivity<in T: ViewModel> : AppCompatActivity() {
+abstract class BaseActivity<T: ViewModel> : AppCompatActivity() {
 
-    abstract fun bindLiveData(viewModel: T)
+    protected lateinit var viewModel: T
+
+    abstract fun bindLiveData()
 
 }
