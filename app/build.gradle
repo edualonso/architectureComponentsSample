@@ -59,5 +59,6 @@ dependencies {
     compile "com.jakewharton.rxbinding2:rxbinding:$rxbinding"
 
     compile "com.google.dagger:dagger:$dagger"
+    compile "com.google.dagger:dagger-android-support:$dagger"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger"
 }
