@@ -1,21 +1,14 @@
 package com.example.edu.myapplication.di.application
 
-import android.content.Context
-import android.preference.PreferenceManager
-import com.example.edu.myapplication.base.BaseApplication
+import com.example.edu.myapplication.weather.WeatherActivity
 import dagger.Module
-import dagger.Provides
+import dagger.android.ContributesAndroidInjector
 
 /**
- * Created by edu on 21/12/2017.
+ * Created by edu on 24/12/2017.
  */
 @Module
-class ApplicationModule {
-
-    @Provides
-    fun providesApplicationContext(applicationContext: BaseApplication): Context = applicationContext
-
-    @Provides
-    fun providesSharedPreferences(context: Context) = PreferenceManager.getDefaultSharedPreferences(context)
-
+abstract class ApplicationModule {
+    @ContributesAndroidInjector
+    internal abstract fun contributesWeatherActivityInjector(): WeatherActivity
 }

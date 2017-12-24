@@ -14,7 +14,7 @@ buildscript {
         rxbinding = '2.0.0'
         retrofit = '2.3.0'
         okhttp = '3.9.1'
-        dagger = '2.14'
+        dagger = '2.14.1'
     }
     repositories {
         google()
