@@ -7,15 +7,15 @@ import android.view.ViewGroup
 import com.example.edu.myapplication.R
 import com.example.edu.myapplication.databinding.ViewLocationItemBinding
 import com.example.edu.myapplication.weather.model.Location
-import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by edu on 20/12/2017.
  */
-class LocationAdapter : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
+class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
     private var goToLocation: ((location: Location) -> Unit) = {}
-    private var locations: MutableList<Location> = ArrayList()
+    private var locations = mutableListOf<Location>()
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         with(holder.locationItemBinding) {

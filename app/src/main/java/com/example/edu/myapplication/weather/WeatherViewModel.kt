@@ -2,6 +2,7 @@ package com.example.edu.myapplication.weather
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.example.edu.myapplication.base.BaseApplication
 import com.example.edu.myapplication.weather.api.WeatherApiClient
 import com.example.edu.myapplication.weather.model.Location
 import com.example.edu.myapplication.weather.search.LocationAdapter
@@ -9,19 +10,29 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * Created by edu on 19/12/2017.
  */
 class WeatherViewModel : ViewModel() {
 
-    val locationAdapter = LocationAdapter()
+    @Inject
+    lateinit var locationAdapter: LocationAdapter
 
-    var weatherApiClient: WeatherApiClient = WeatherApiClient()
+    @Inject
+    lateinit var weatherApiClient: WeatherApiClient
+
     var cityStateLiveData: MutableLiveData<SearchForCityState> = MutableLiveData()
 
     init {
+        BaseApplication.applicationComponent.inject(this)
+
         cityStateLiveData.value = idle("")
+    }
+
+    fun setLocations(locations: List<Location>?) {
+        locationAdapter.setLocations(locations)
     }
 
     fun observeCityState(cityTextChanges: Observable<CharSequence>) {

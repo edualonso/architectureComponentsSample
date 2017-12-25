@@ -1,8 +1,8 @@
 package com.example.edu.myapplication.base
 
-
 import android.app.Activity
 import android.app.Application
+import com.example.edu.myapplication.di.application.ApplicationComponent
 import com.example.edu.myapplication.di.application.DaggerApplicationComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -10,7 +10,6 @@ import dagger.android.HasActivityInjector
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import javax.inject.Inject
-
 
 /**
  * Created by edu on 21/12/2017.
@@ -29,13 +28,17 @@ class BaseApplication : Application(), HasActivityInjector {
         // initialise Realm before Dagger (or else generating a RealmConfiguration will make Realm crash
         Realm.init(this);
 
-        DaggerApplicationComponent.create()
-                .inject(this)
+        applicationComponent = DaggerApplicationComponent.create()
+        applicationComponent.inject(this)
 
         Realm.setDefaultConfiguration(realmConfiguration)
     }
 
     override fun activityInjector(): AndroidInjector<Activity> {
         return dispatchingActivityInjector
+    }
+
+    companion object {
+        internal lateinit var applicationComponent: ApplicationComponent
     }
 }
