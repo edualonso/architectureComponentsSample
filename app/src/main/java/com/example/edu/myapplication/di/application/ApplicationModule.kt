@@ -1,6 +1,6 @@
 package com.example.edu.myapplication.di.application
 
-import com.example.edu.myapplication.weather.WeatherActivity
+import com.example.edu.myapplication.weather.AddLocationActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -10,5 +10,5 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ApplicationModule {
     @ContributesAndroidInjector
-    internal abstract fun contributesWeatherActivityInjector(): WeatherActivity
+    internal abstract fun contributesAddLocationActivityInjector(): AddLocationActivity
 }

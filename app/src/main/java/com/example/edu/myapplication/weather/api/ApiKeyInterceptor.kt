@@ -2,11 +2,12 @@ package com.example.edu.myapplication.weather.api
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Inject
 
 /**
  * Created by edu on 19/12/2017.
  */
-class ApiKeyInterceptor : Interceptor {
+class ApiKeyInterceptor @Inject constructor(): Interceptor {
 
     private val KEY = "KEY"
     private val VALUE = "11682c59698444f6b59160534171912"

@@ -2,11 +2,19 @@ package com.example.edu.myapplication.weather.repository.memory
 
 import com.example.edu.myapplication.weather.model.Location
 import com.example.edu.myapplication.weather.repository.WeatherRepository
+import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.error
+import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.locationExists
+import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.notFound
+import io.reactivex.Completable
+import io.reactivex.Single
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by edu on 24/12/2017.
  */
-class MemoryWeatherRepository: WeatherRepository {
+@Singleton
+class MemoryWeatherRepository @Inject constructor(): WeatherRepository {
 
     private val locations = mutableMapOf<String, Location>()
 
@@ -14,7 +22,30 @@ class MemoryWeatherRepository: WeatherRepository {
         locations.put(location.name, location)
     }
 
+    override fun saveLocationRx(location: Location): Completable {
+        return Completable.create {
+            locations.put(location.name, location)
+            it.onComplete()
+        }
+    }
+
     override fun getLocation(location: Location): Location? {
-        return locations.get(location.name)
+        return locations[location.name]
+    }
+
+    override fun getLocationRx(location: Location): Single<WeatherRepository.Companion.GetLocationState> {
+        return Single.create<WeatherRepository.Companion.GetLocationState> {
+            val searchedLocation = locations[location.name]
+            try {
+                if (searchedLocation != null) {
+                    it.onSuccess(locationExists(location))
+                } else {
+                    it.onSuccess(notFound(location))
+                }
+            } catch (e: Exception) {
+                it.onSuccess(error(location, e))
+            }
+
+        }
     }
 }

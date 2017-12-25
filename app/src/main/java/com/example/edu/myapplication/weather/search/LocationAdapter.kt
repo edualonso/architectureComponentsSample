@@ -1,5 +1,6 @@
 package com.example.edu.myapplication.weather.search
 
+import android.annotation.SuppressLint
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -14,13 +15,14 @@ import javax.inject.Inject
  */
 class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
-    private var goToLocation: ((location: Location) -> Unit) = {}
+    private var locationClickedLambda: ((location: Location) -> Unit) = {}
     private var locations = mutableListOf<Location>()
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         with(holder.locationItemBinding) {
             root.setOnClickListener {
-                goToLocation(locations[position])
+                locationClickedLambda(locations[position])
             }
             name.text = locations[position].name + " with ID ${locations[position].id}"
         }
@@ -45,8 +47,8 @@ class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapt
         }
     }
 
-    fun setGoToLocation(goToLocation: ((location: Location) -> Unit)) {
-        this.goToLocation = goToLocation
+    fun setLocationClickedLambda(locationClickedLambda: ((location: Location) -> Unit)) {
+        this.locationClickedLambda = locationClickedLambda
     }
 
     class LocationViewHolder(val locationItemBinding: ViewLocationItemBinding) : RecyclerView.ViewHolder(locationItemBinding.root)

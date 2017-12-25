@@ -5,10 +5,12 @@ import com.example.edu.myapplication.weather.model.CurrentWeather
 import com.example.edu.myapplication.weather.model.Location
 import io.reactivex.Single
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by edu on 19/12/2017.
  */
+@Singleton
 class WeatherApiClient @Inject constructor() {
 
     init {

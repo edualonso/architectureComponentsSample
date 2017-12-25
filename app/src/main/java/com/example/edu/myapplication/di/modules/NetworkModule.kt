@@ -10,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
+import javax.inject.Singleton
 
 /**
  * Created by edu on 24/12/2017.
@@ -17,19 +18,26 @@ import javax.inject.Named
 @Module
 class NetworkModule {
 
-    @Provides
-    @Named("BASE_URL")
-    fun providesBaseUrl(): String = "http://api.apixu.com/v1/"
+    //--------------------------------------------------------------------------------
+    // Interceptors
+    //--------------------------------------------------------------------------------
 
     @Provides
+    @Singleton
     fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
         return loggingInterceptor
     }
 
+    //--------------------------------------------------------------------------------
+    // Services
+    //--------------------------------------------------------------------------------
+
     @Provides
+    @Singleton
     fun providesWeatherService(
+            apiKeyInterceptor: ApiKeyInterceptor,
             loggingInterceptor: HttpLoggingInterceptor,
             @Named("BASE_URL") baseUrl: String
     ): WeatherService {
@@ -39,9 +47,17 @@ class NetworkModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(OkHttpClient.Builder()
                         .addInterceptor(loggingInterceptor)
-                        .addInterceptor(ApiKeyInterceptor())
+                        .addInterceptor(apiKeyInterceptor)
                         .build())
                 .build()
                 .create(WeatherService::class.java)
     }
+
+    //--------------------------------------------------------------------------------
+    // Other
+    //--------------------------------------------------------------------------------
+
+    @Provides
+    @Named("BASE_URL")
+    fun providesBaseUrl(): String = "http://api.apixu.com/v1/"
 }
