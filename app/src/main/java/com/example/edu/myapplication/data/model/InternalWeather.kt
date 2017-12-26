@@ -1,6 +1,6 @@
-package com.example.edu.myapplication.weather.model
+package com.example.edu.myapplication.data.model
 
-import com.example.edu.myapplication.weather.model.apixu.CurrentWeather
+import com.example.edu.myapplication.data.model.apixu.CurrentWeather
 
 /**
  * Created by edu on 26/12/2017.
@@ -9,6 +9,7 @@ data class InternalWeather(
         val lastUpdated: Long,
         val location: InternalLocation
 )
+
 
 /**
  * Extension functions for converting weather forecasts from different APIs to our own data model.

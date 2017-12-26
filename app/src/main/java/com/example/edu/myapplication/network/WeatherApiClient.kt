@@ -1,7 +1,7 @@
-package com.example.edu.myapplication.weather.api
+package com.example.edu.myapplication.network
 
-import com.example.edu.myapplication.weather.model.InternalLocation
-import com.example.edu.myapplication.weather.model.InternalWeather
+import com.example.edu.myapplication.data.model.InternalLocation
+import com.example.edu.myapplication.data.model.InternalWeather
 import io.reactivex.Single
 
 /**

@@ -1,11 +1,11 @@
-package com.example.edu.myapplication.weather
+package com.example.edu.myapplication.weather.addlocation
 
 import android.util.Log
-import com.example.edu.myapplication.base.BaseApplication
-import com.example.edu.myapplication.weather.api.apixu.ApixuWeatherApiClient
-import com.example.edu.myapplication.weather.model.InternalLocation
-import com.example.edu.myapplication.weather.repository.WeatherRepository
-import com.example.edu.myapplication.weather.repository.memory.MemoryWeatherRepository
+import com.example.edu.myapplication.data.model.InternalLocation
+import com.example.edu.myapplication.data.repository.WeatherRepository
+import com.example.edu.myapplication.data.repository.memory.MemoryWeatherRepository
+import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
+import com.example.edu.myapplication.weather.base.BaseApplication
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

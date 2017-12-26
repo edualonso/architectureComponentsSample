@@ -1,6 +1,6 @@
 package com.example.edu.myapplication.di.application
 
-import com.example.edu.myapplication.weather.AddLocationActivity
+import com.example.edu.myapplication.weather.addlocation.AddLocationActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

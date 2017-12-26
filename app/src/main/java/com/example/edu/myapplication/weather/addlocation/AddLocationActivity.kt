@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.weather
+package com.example.edu.myapplication.weather.addlocation
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
@@ -6,8 +6,8 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.example.edu.myapplication.R
-import com.example.edu.myapplication.base.BaseActivity
-import com.example.edu.myapplication.weather.search.LocationAdapter
+import com.example.edu.myapplication.weather.base.BaseActivity
+import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
 import com.jakewharton.rxbinding2.widget.RxTextView
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject

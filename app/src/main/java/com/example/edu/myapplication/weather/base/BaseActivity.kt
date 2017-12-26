@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.base
+package com.example.edu.myapplication.weather.base
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

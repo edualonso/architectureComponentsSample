@@ -1,6 +1,6 @@
-package com.example.edu.myapplication.weather.model
+package com.example.edu.myapplication.data.model
 
-import com.example.edu.myapplication.weather.model.apixu.Location
+import com.example.edu.myapplication.data.model.apixu.Location
 
 /**
  * Created by edu on 26/12/2017.
@@ -13,6 +13,7 @@ data class InternalLocation(
         val lat: Float = 0f,
         val lon: Float = 0f
 )
+
 
 /**
  * Extension functions for converting locations from different APIs to our own data model.

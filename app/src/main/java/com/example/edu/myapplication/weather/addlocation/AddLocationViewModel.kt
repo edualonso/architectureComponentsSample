@@ -1,9 +1,9 @@
-package com.example.edu.myapplication.weather
+package com.example.edu.myapplication.weather.addlocation
 
 import android.arch.lifecycle.MutableLiveData
-import com.example.edu.myapplication.base.BaseApplication
-import com.example.edu.myapplication.base.BaseViewModel
-import com.example.edu.myapplication.weather.model.InternalLocation
+import com.example.edu.myapplication.weather.base.BaseApplication
+import com.example.edu.myapplication.weather.base.BaseViewModel
+import com.example.edu.myapplication.data.model.InternalLocation
 import io.reactivex.Observable
 import javax.inject.Inject
 

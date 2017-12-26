@@ -1,7 +1,7 @@
 package com.example.edu.myapplication.di.modules
 
-import com.example.edu.myapplication.weather.api.apixu.ApiKeyInterceptor
-import com.example.edu.myapplication.weather.api.apixu.ApixuWeatherService
+import com.example.edu.myapplication.network.apixu.ApiKeyInterceptor
+import com.example.edu.myapplication.network.apixu.ApixuWeatherService
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

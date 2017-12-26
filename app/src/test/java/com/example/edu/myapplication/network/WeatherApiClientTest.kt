@@ -1,4 +1,4 @@
-//package com.example.edu.myapplication.weather.api
+//package com.example.edu.myapplication.api
 //
 //import okhttp3.mockwebserver.MockResponse
 //import okhttp3.mockwebserver.MockWebServer

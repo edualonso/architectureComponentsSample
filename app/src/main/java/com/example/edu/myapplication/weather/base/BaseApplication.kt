@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.base
+package com.example.edu.myapplication.weather.base
 
 import android.app.Activity
 import android.support.multidex.MultiDexApplication

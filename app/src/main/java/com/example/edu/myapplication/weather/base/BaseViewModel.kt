@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.base
+package com.example.edu.myapplication.weather.base
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable

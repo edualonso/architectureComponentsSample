@@ -1,10 +1,10 @@
-package com.example.edu.myapplication.weather.repository.memory
+package com.example.edu.myapplication.data.repository.memory
 
-import com.example.edu.myapplication.weather.model.InternalLocation
-import com.example.edu.myapplication.weather.repository.WeatherRepository
-import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.error
-import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.locationExists
-import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.notFound
+import com.example.edu.myapplication.data.model.InternalLocation
+import com.example.edu.myapplication.data.repository.WeatherRepository
+import com.example.edu.myapplication.data.repository.WeatherRepository.Companion.error
+import com.example.edu.myapplication.data.repository.WeatherRepository.Companion.locationExists
+import com.example.edu.myapplication.data.repository.WeatherRepository.Companion.notFound
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -45,7 +45,6 @@ class MemoryWeatherRepository @Inject constructor(): WeatherRepository {
             } catch (e: Exception) {
                 it.onSuccess(error(location, e))
             }
-
         }
     }
 }

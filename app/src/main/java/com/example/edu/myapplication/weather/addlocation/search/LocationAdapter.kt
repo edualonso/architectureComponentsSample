@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.weather.search
+package com.example.edu.myapplication.weather.addlocation.search
 
 import android.annotation.SuppressLint
 import android.databinding.DataBindingUtil
@@ -6,8 +6,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.edu.myapplication.R
+import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.databinding.ViewLocationItemBinding
-import com.example.edu.myapplication.weather.model.InternalLocation
 import javax.inject.Inject
 
 /**

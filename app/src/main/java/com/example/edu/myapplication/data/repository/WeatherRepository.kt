@@ -1,6 +1,6 @@
-package com.example.edu.myapplication.weather.repository
+package com.example.edu.myapplication.data.repository
 
-import com.example.edu.myapplication.weather.model.InternalLocation
+import com.example.edu.myapplication.data.model.InternalLocation
 import io.reactivex.Completable
 import io.reactivex.Single
 

@@ -1,12 +1,12 @@
 package com.example.edu.myapplication.di.application
 
-import com.example.edu.myapplication.base.BaseApplication
 import com.example.edu.myapplication.di.activity.ActivityModule
 import com.example.edu.myapplication.di.modules.DatabaseModule
 import com.example.edu.myapplication.di.modules.NetworkModule
-import com.example.edu.myapplication.weather.AddLocationInteractor
-import com.example.edu.myapplication.weather.AddLocationViewModel
-import com.example.edu.myapplication.weather.api.apixu.ApixuWeatherApiClient
+import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
+import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
+import com.example.edu.myapplication.weather.addlocation.AddLocationViewModel
+import com.example.edu.myapplication.weather.base.BaseApplication
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector

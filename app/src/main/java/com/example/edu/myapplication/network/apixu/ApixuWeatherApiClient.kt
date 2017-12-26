@@ -1,12 +1,12 @@
-package com.example.edu.myapplication.weather.api.apixu
+package com.example.edu.myapplication.network.apixu
 
-import com.example.edu.myapplication.base.BaseApplication
-import com.example.edu.myapplication.weather.api.WeatherApiClient
-import com.example.edu.myapplication.weather.model.InternalLocation
-import com.example.edu.myapplication.weather.model.InternalWeather
-import com.example.edu.myapplication.weather.model.apixu.Location
-import com.example.edu.myapplication.weather.model.toInternalLocation
-import com.example.edu.myapplication.weather.model.toInternalWeather
+import com.example.edu.myapplication.data.model.InternalLocation
+import com.example.edu.myapplication.data.model.InternalWeather
+import com.example.edu.myapplication.data.model.apixu.Location
+import com.example.edu.myapplication.data.model.toInternalLocation
+import com.example.edu.myapplication.data.model.toInternalWeather
+import com.example.edu.myapplication.network.WeatherApiClient
+import com.example.edu.myapplication.weather.base.BaseApplication
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,12 +17,12 @@ import javax.inject.Singleton
 @Singleton
 class ApixuWeatherApiClient @Inject constructor() : WeatherApiClient {
 
+    @Inject
+    lateinit var apixuWeatherService: ApixuWeatherService
+
     init {
         BaseApplication.applicationComponent.inject(this)
     }
-
-    @Inject
-    lateinit var apixuWeatherService: ApixuWeatherService
 
     override fun searchForLocation(location: String): Single<List<InternalLocation>> {
         return apixuWeatherService.searchForLocation(location).map { locations: List<Location> ->

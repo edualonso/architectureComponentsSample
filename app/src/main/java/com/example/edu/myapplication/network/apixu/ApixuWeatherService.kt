@@ -1,7 +1,7 @@
-package com.example.edu.myapplication.weather.api.apixu
+package com.example.edu.myapplication.network.apixu
 
-import com.example.edu.myapplication.weather.model.apixu.CurrentWeather
-import com.example.edu.myapplication.weather.model.apixu.Location
+import com.example.edu.myapplication.data.model.apixu.CurrentWeather
+import com.example.edu.myapplication.data.model.apixu.Location
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

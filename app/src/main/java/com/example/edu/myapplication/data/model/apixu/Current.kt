@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.weather.model.apixu
+package com.example.edu.myapplication.data.model.apixu
 
 import com.google.gson.annotations.SerializedName
 
