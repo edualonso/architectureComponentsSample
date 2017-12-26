@@ -2,8 +2,8 @@ package com.example.edu.myapplication.weather
 
 import android.util.Log
 import com.example.edu.myapplication.base.BaseApplication
-import com.example.edu.myapplication.weather.api.WeatherApiClient
-import com.example.edu.myapplication.weather.model.Location
+import com.example.edu.myapplication.weather.api.apixu.ApixuWeatherApiClient
+import com.example.edu.myapplication.weather.model.InternalLocation
 import com.example.edu.myapplication.weather.repository.WeatherRepository
 import com.example.edu.myapplication.weather.repository.memory.MemoryWeatherRepository
 import io.reactivex.Observable
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 class AddLocationInteractor @Inject constructor() {
 
     @Inject
-    lateinit var weatherApiClient: WeatherApiClient
+    lateinit var weatherApiClient: ApixuWeatherApiClient
     @Inject
     lateinit var weatherRepository: MemoryWeatherRepository
 
@@ -30,8 +30,8 @@ class AddLocationInteractor @Inject constructor() {
         BaseApplication.applicationComponent.inject(this)
     }
 
-    fun getLocationClickedLambda(): (Location) -> Unit {
-        return { location: Location ->
+    fun getLocationClickedLambda(): (InternalLocation) -> Unit {
+        return { location: InternalLocation ->
             weatherRepository.getLocationRx(location)
                     .subscribe { getLocationState: WeatherRepository.Companion.GetLocationState ->
                         val locationName = getLocationState.location.name

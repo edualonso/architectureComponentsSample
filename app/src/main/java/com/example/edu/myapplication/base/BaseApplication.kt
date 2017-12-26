@@ -1,7 +1,7 @@
 package com.example.edu.myapplication.base
 
 import android.app.Activity
-import android.app.Application
+import android.support.multidex.MultiDexApplication
 import com.example.edu.myapplication.di.application.ApplicationComponent
 import com.example.edu.myapplication.di.application.DaggerApplicationComponent
 import dagger.android.AndroidInjector
@@ -14,7 +14,7 @@ import javax.inject.Inject
 /**
  * Created by edu on 21/12/2017.
  */
-class BaseApplication : Application(), HasActivityInjector {
+class BaseApplication : MultiDexApplication(), HasActivityInjector {
 
     @Inject
     lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>

@@ -1,7 +1,7 @@
-package com.example.edu.myapplication.weather.api
+package com.example.edu.myapplication.weather.api.apixu
 
-import com.example.edu.myapplication.weather.model.CurrentWeather
-import com.example.edu.myapplication.weather.model.Location
+import com.example.edu.myapplication.weather.model.apixu.CurrentWeather
+import com.example.edu.myapplication.weather.model.apixu.Location
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -9,7 +9,7 @@ import retrofit2.http.Query
 /**
  * Created by edu on 19/12/2017.
  */
-interface WeatherService {
+interface ApixuWeatherService {
 
     @GET(AUTOCOMPLETION)
     fun searchForLocation(@Query(QUERY) location: String): Single<List<Location>>

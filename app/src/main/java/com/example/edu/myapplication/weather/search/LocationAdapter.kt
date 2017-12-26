@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.edu.myapplication.R
 import com.example.edu.myapplication.databinding.ViewLocationItemBinding
-import com.example.edu.myapplication.weather.model.Location
+import com.example.edu.myapplication.weather.model.InternalLocation
 import javax.inject.Inject
 
 /**
@@ -15,8 +15,8 @@ import javax.inject.Inject
  */
 class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
-    private var locationClickedLambda: ((location: Location) -> Unit) = {}
-    private var locations = mutableListOf<Location>()
+    private var locationClickedLambda: ((location: InternalLocation) -> Unit) = {}
+    private var locations = mutableListOf<InternalLocation>()
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
@@ -37,7 +37,7 @@ class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapt
         return LocationViewHolder(binding)
     }
 
-    fun setLocations(locations: List<Location>?) {
+    fun setLocations(locations: List<InternalLocation>?) {
         locations?.apply {
             this@LocationAdapter.locations.clear()
             this@LocationAdapter.locations.addAll(locations)
@@ -47,7 +47,7 @@ class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapt
         }
     }
 
-    fun setLocationClickedLambda(locationClickedLambda: ((location: Location) -> Unit)) {
+    fun setLocationClickedLambda(locationClickedLambda: ((location: InternalLocation) -> Unit)) {
         this.locationClickedLambda = locationClickedLambda
     }
 

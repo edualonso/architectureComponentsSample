@@ -6,7 +6,7 @@ import com.example.edu.myapplication.di.modules.DatabaseModule
 import com.example.edu.myapplication.di.modules.NetworkModule
 import com.example.edu.myapplication.weather.AddLocationInteractor
 import com.example.edu.myapplication.weather.AddLocationViewModel
-import com.example.edu.myapplication.weather.api.WeatherApiClient
+import com.example.edu.myapplication.weather.api.apixu.ApixuWeatherApiClient
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 ))
 interface ApplicationComponent: AndroidInjector<BaseApplication> {
 
-    fun inject(weatherApiClient: WeatherApiClient)
+    fun inject(weatherApiClient: ApixuWeatherApiClient)
     fun inject(addLocationViewModel: AddLocationViewModel)      // TODO: can we do this more abstract?
     fun inject(addLocationInteractor: AddLocationInteractor)    // TODO: can we do this more abstract?
 

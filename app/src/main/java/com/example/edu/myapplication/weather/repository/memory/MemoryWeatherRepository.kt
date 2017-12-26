@@ -1,6 +1,6 @@
 package com.example.edu.myapplication.weather.repository.memory
 
-import com.example.edu.myapplication.weather.model.Location
+import com.example.edu.myapplication.weather.model.InternalLocation
 import com.example.edu.myapplication.weather.repository.WeatherRepository
 import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.error
 import com.example.edu.myapplication.weather.repository.WeatherRepository.Companion.locationExists
@@ -16,24 +16,24 @@ import javax.inject.Singleton
 @Singleton
 class MemoryWeatherRepository @Inject constructor(): WeatherRepository {
 
-    private val locations = mutableMapOf<String, Location>()
+    private val locations = mutableMapOf<String, InternalLocation>()
 
-    override fun saveLocation(location: Location) {
+    override fun saveLocation(location: InternalLocation) {
         locations.put(location.name, location)
     }
 
-    override fun saveLocationRx(location: Location): Completable {
+    override fun saveLocationRx(location: InternalLocation): Completable {
         return Completable.create {
             locations.put(location.name, location)
             it.onComplete()
         }
     }
 
-    override fun getLocation(location: Location): Location? {
+    override fun getLocation(location: InternalLocation): InternalLocation? {
         return locations[location.name]
     }
 
-    override fun getLocationRx(location: Location): Single<WeatherRepository.Companion.GetLocationState> {
+    override fun getLocationRx(location: InternalLocation): Single<WeatherRepository.Companion.GetLocationState> {
         return Single.create<WeatherRepository.Companion.GetLocationState> {
             val searchedLocation = locations[location.name]
             try {

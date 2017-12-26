@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.weather.api
+package com.example.edu.myapplication.weather.api.apixu
 
 import okhttp3.Interceptor
 import okhttp3.Response

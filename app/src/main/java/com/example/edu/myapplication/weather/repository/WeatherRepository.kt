@@ -1,6 +1,6 @@
 package com.example.edu.myapplication.weather.repository
 
-import com.example.edu.myapplication.weather.model.Location
+import com.example.edu.myapplication.weather.model.InternalLocation
 import io.reactivex.Completable
 import io.reactivex.Single
 
@@ -9,10 +9,10 @@ import io.reactivex.Single
  */
 interface WeatherRepository {
 
-    fun saveLocation(location: Location)
-    fun saveLocationRx(location: Location): Completable
-    fun getLocation(location: Location): Location?
-    fun getLocationRx(location: Location): Single<GetLocationState>
+    fun saveLocation(location: InternalLocation)
+    fun saveLocationRx(location: InternalLocation): Completable
+    fun getLocation(location: InternalLocation): InternalLocation?
+    fun getLocationRx(location: InternalLocation): Single<GetLocationState>
 
     /**
      * Models de state for searching locations in the repository.
@@ -22,12 +22,12 @@ interface WeatherRepository {
                 val locationExists: Boolean,
                 val notFound: Boolean,
                 val error: Boolean,
-                val location: Location,
+                val location: InternalLocation,
                 val throwable: Throwable? = null
         )
 
-        fun locationExists(location: Location) = GetLocationState(true, false, false, location)
-        fun notFound(location: Location) = GetLocationState(false, true, false, location)
-        fun error(location: Location, throwable: Throwable) = GetLocationState(false, false, true, location, throwable)
+        fun locationExists(location: InternalLocation) = GetLocationState(true, false, false, location)
+        fun notFound(location: InternalLocation) = GetLocationState(false, true, false, location)
+        fun error(location: InternalLocation, throwable: Throwable) = GetLocationState(false, false, true, location, throwable)
     }
 }

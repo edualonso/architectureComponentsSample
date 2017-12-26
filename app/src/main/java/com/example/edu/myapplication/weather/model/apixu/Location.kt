@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.weather.model
+package com.example.edu.myapplication.weather.model.apixu
 
 /**
  * Created by edu on 19/12/2017.

@@ -1,7 +1,7 @@
 package com.example.edu.myapplication.di.modules
 
-import com.example.edu.myapplication.weather.api.ApiKeyInterceptor
-import com.example.edu.myapplication.weather.api.WeatherService
+import com.example.edu.myapplication.weather.api.apixu.ApiKeyInterceptor
+import com.example.edu.myapplication.weather.api.apixu.ApixuWeatherService
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -40,7 +40,7 @@ class NetworkModule {
             apiKeyInterceptor: ApiKeyInterceptor,
             loggingInterceptor: HttpLoggingInterceptor,
             @Named("BASE_URL") baseUrl: String
-    ): WeatherService {
+    ): ApixuWeatherService {
         return Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -50,7 +50,7 @@ class NetworkModule {
                         .addInterceptor(apiKeyInterceptor)
                         .build())
                 .build()
-                .create(WeatherService::class.java)
+                .create(ApixuWeatherService::class.java)
     }
 
     //--------------------------------------------------------------------------------

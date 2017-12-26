@@ -3,7 +3,7 @@ package com.example.edu.myapplication.weather
 import android.arch.lifecycle.MutableLiveData
 import com.example.edu.myapplication.base.BaseApplication
 import com.example.edu.myapplication.base.BaseViewModel
-import com.example.edu.myapplication.weather.model.Location
+import com.example.edu.myapplication.weather.model.InternalLocation
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -49,13 +49,13 @@ class AddLocationViewModel : BaseViewModel() {
                 val success: Boolean,
                 val error: Boolean,
                 val city: String,
-                val locations: List<Location> = ArrayList(),
+                val locations: List<InternalLocation> = ArrayList(),
                 val throwable: Throwable? = null
         )
 
         fun idle(city: String = ""): SearchForCityState = SearchForCityState(true, false, false, false, city)
         fun searching(city: String): SearchForCityState = SearchForCityState(false, true, false, false, city)
-        fun success(city: String, locations: List<Location>): SearchForCityState = SearchForCityState(false, false, true, false, city, locations)
+        fun success(city: String, locations: List<InternalLocation>): SearchForCityState = SearchForCityState(false, false, true, false, city, locations)
         fun error(throwable: Throwable): SearchForCityState = SearchForCityState(false, false, false, true, "", arrayListOf(), throwable)
     }
 }
