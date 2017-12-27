@@ -1,10 +1,11 @@
 package com.example.edu.myapplication.weather.addlocation
 
 import android.arch.lifecycle.MutableLiveData
+import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.weather.base.BaseApplication
 import com.example.edu.myapplication.weather.base.BaseViewModel
-import com.example.edu.myapplication.data.model.InternalLocation
 import io.reactivex.Observable
+import java.io.InputStream
 import javax.inject.Inject
 
 /**
@@ -35,6 +36,18 @@ class AddLocationViewModel : BaseViewModel() {
                     }
             )
         }
+    }
+
+    fun setCityListInputStream(inputStream: InputStream) {
+        interactor.cityListInputStream = inputStream
+    }
+
+    fun parseCities() {
+        interactor.parseCities()
+    }
+
+    fun countCities() {
+        interactor.countCities()
     }
 
 

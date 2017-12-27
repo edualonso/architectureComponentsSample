@@ -31,7 +31,7 @@ class BaseApplication : MultiDexApplication(), HasActivityInjector {
         applicationComponent = DaggerApplicationComponent.create()
         applicationComponent.inject(this)
 
-        Realm.setDefaultConfiguration(realmConfiguration)
+//        Realm.setDefaultConfiguration(realmConfiguration)
     }
 
     override fun activityInjector(): AndroidInjector<Activity> {

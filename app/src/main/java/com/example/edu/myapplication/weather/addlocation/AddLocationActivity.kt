@@ -3,11 +3,13 @@ package com.example.edu.myapplication.weather.addlocation
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.example.edu.myapplication.R
-import com.example.edu.myapplication.weather.base.BaseActivity
+import com.example.edu.myapplication.databinding.ActivityMainBinding
 import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
+import com.example.edu.myapplication.weather.base.BaseActivity
 import com.jakewharton.rxbinding2.widget.RxTextView
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
@@ -16,15 +18,22 @@ class AddLocationActivity : BaseActivity() {
 
     @Inject
     lateinit var locationAdapter: LocationAdapter
+    @Inject
+    lateinit var interactor: AddLocationInteractor
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: AddLocationViewModel        // TODO: inject this too
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         bindLiveData()
         setupRecyclerView()
+
+        if (interactor.countCities() == 0L) {
+            interactor.parseCities()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -49,6 +58,8 @@ class AddLocationActivity : BaseActivity() {
         )
 
         viewModel.observeCityState(RxTextView.textChanges(cityField))
+        viewModel.setCityListInputStream(assets.open("city_list.json"))
+        binding.viewModel = viewModel
     }
 
     private fun setupRecyclerView() {

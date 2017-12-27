@@ -2,13 +2,20 @@ package com.example.edu.myapplication.weather.addlocation
 
 import android.util.Log
 import com.example.edu.myapplication.data.model.InternalLocation
+import com.example.edu.myapplication.data.model.openweather.Location
 import com.example.edu.myapplication.data.repository.WeatherRepository
 import com.example.edu.myapplication.data.repository.memory.MemoryWeatherRepository
 import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
 import com.example.edu.myapplication.weather.base.BaseApplication
+import com.google.gson.GsonBuilder
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,6 +32,7 @@ class AddLocationInteractor @Inject constructor() {
     lateinit var weatherRepository: MemoryWeatherRepository
 
     lateinit var addLocationViewModel: AddLocationViewModel
+    lateinit var cityListInputStream: InputStream
 
     init {
         BaseApplication.applicationComponent.inject(this)
@@ -46,7 +54,7 @@ class AddLocationInteractor @Inject constructor() {
                             }
                             getLocationState.locationExists -> Log.e("---", "-------------> LOCATION $locationName ALREADY EXISTS")
                             getLocationState.error          -> Log.e("---", "-------------> THERE WAS AN ERROR SEARCHING FOR $locationName")
-                            else                            -> Log.e("---", "-------------> WTF HAPPENED??? TRIED TO SAVE $locationName BUT FAILED: ${getLocationState.error}")
+                            else -> Log.e("---", "-------------> WTF HAPPENED??? TRIED TO SAVE $locationName BUT FAILED: ${getLocationState.error}")
                         }
                     }
         }
@@ -61,8 +69,8 @@ class AddLocationInteractor @Inject constructor() {
                 .map { city ->
                     when {
                         city.length in 0..2 -> AddLocationViewModel.idle(city.toString())
-                        city.length >= 3    -> AddLocationViewModel.searching(city.toString())
-                        else                -> AddLocationViewModel.error(RuntimeException("WTF has just happened?"))
+                        city.length >= 3 -> AddLocationViewModel.searching(city.toString())
+                        else -> AddLocationViewModel.error(RuntimeException("WTF has just happened?"))
                     }
                 }
                 // 2 - update UI via live data
@@ -92,4 +100,47 @@ class AddLocationInteractor @Inject constructor() {
                 }
     }
 
+    fun parseCities() {
+        Single
+                .fromCallable {
+                    Log.e("---------------", "===========> ${Thread.currentThread().name}: FILE READING JOB STARTED")
+                    val buffer = StringBuilder()
+                    val bufferedReader = BufferedReader(InputStreamReader(cityListInputStream, "UTF-8"))
+                    var jsonString: String
+
+                    while (true) {
+                        jsonString = bufferedReader.readLine() ?: break
+                        buffer.append(jsonString)
+                    }
+                    cityListInputStream.close()
+                    Log.e("---------------", "===========> ${Thread.currentThread().name}: FILE READING JOB FINISHED")
+
+                    return@fromCallable buffer.toString()
+                }
+                .map { jsonString: String ->
+                    Log.e("---------------", "===========> ${Thread.currentThread().name}: GSON JOB STARTED")
+                    val gson = GsonBuilder().create()
+                    val cities: List<Location> = gson.fromJson(jsonString, Array<Location>::class.java).toList()
+                    Log.e("---------------", "===========> ${Thread.currentThread().name}: GSON JOB FINISHED")
+
+                    return@map cities
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { cities: List<Location> ->
+                    Log.e("---------------", "===========> ${Thread.currentThread().name}: PARSED ${cities.size} cities")
+
+                    Realm.getDefaultInstance().executeTransactionAsync {
+                        Log.e("---------------", "===========> ${Thread.currentThread().name}: STORING CITIES...")
+                        it.copyToRealmOrUpdate(cities)
+                        Log.e("---------------", "===========> ${Thread.currentThread().name}: STORING CITIES DONE!!!")
+                    }
+                }
+    }
+
+    fun countCities(): Long {
+        val numCities = Realm.getDefaultInstance().where(Location::class.java).count()
+        Log.e("---------------", "===========> THERE ARE $numCities CITIES STORED IN THE DATABASE")
+        return numCities
+    }
 }
