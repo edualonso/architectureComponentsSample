@@ -1,6 +1,7 @@
 package com.example.edu.myapplication.di.modules
 
 import com.example.edu.myapplication.BuildConfig
+import com.example.edu.myapplication.network.ApiKeyInterceptor
 import com.example.edu.myapplication.network.apixu.ApixuApiKeyInterceptor
 import com.example.edu.myapplication.network.apixu.ApixuWeatherService
 import com.example.edu.myapplication.network.openweather.OpenWeatherApiKeyInterceptor
@@ -43,39 +44,39 @@ class NetworkModule {
     @Provides
     @Singleton
     fun providesApixuWeatherService(
-            apixuApiKeyInterceptor: ApixuApiKeyInterceptor,
+            @Named(APIXU_BASE_URL) apixuBaseUrl: String,
             loggingInterceptor: HttpLoggingInterceptor,
-            @Named(APIXU_BASE_URL) baseUrl: String
+            apixuApiKeyInterceptor: ApixuApiKeyInterceptor
     ): ApixuWeatherService {
-        return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(OkHttpClient.Builder()
-                        .addInterceptor(loggingInterceptor)
-                        .addInterceptor(apixuApiKeyInterceptor)
-                        .build())
-                .build()
+        return getRetrofit(apixuBaseUrl, loggingInterceptor, apixuApiKeyInterceptor)
                 .create(ApixuWeatherService::class.java)
     }
 
     @Provides
     @Singleton
     fun providesOpenWeatherService(
-            openWeatherApiKeyInterceptor: OpenWeatherApiKeyInterceptor,
+            @Named(APIXU_BASE_URL) openWeatherBaseUrl: String,
             loggingInterceptor: HttpLoggingInterceptor,
-            @Named(APIXU_BASE_URL) baseUrl: String
+            openWeatherApiKeyInterceptor: OpenWeatherApiKeyInterceptor
     ): OpenWeatherService {
+        return getRetrofit(openWeatherBaseUrl, loggingInterceptor, openWeatherApiKeyInterceptor)
+                .create(OpenWeatherService::class.java)
+    }
+
+    private fun <T : ApiKeyInterceptor> getRetrofit(
+            baseUrl: String,
+            loggingInterceptor: HttpLoggingInterceptor,
+            apiKeyInterceptor: T
+    ): Retrofit {
         return Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(OkHttpClient.Builder()
                         .addInterceptor(loggingInterceptor)
-                        .addInterceptor(openWeatherApiKeyInterceptor)
+                        .addInterceptor(apiKeyInterceptor)
                         .build())
                 .build()
-                .create(OpenWeatherService::class.java)
     }
 
     //--------------------------------------------------------------------------------
@@ -84,7 +85,7 @@ class NetworkModule {
 
     @Provides
     @Named(APIXU_BASE_URL)
-    fun providesBaseUrlApixu(): String = "http://api.apixu.com/v1/"
+    fun providesApixuBaseUrl(): String = "http://api.apixu.com/v1/"
 
     @Provides
     @Named(APIXU_API_KEY)
@@ -92,7 +93,7 @@ class NetworkModule {
 
     @Provides
     @Named(OPENWEATHER_BASE_URL)
-    fun providesBaseUrlOpenweather(): String = "http://api.openweathermap.org/data/2.5/"
+    fun providesOpenweatherBaseUrl(): String = "http://api.openweathermap.org/data/2.5/"
 
     @Provides
     @Named(OPENWEATHER_API_KEY)
