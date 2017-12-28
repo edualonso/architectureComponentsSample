@@ -5,6 +5,7 @@ import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.weather.base.BaseApplication
 import com.example.edu.myapplication.weather.base.BaseViewModel
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.InputStream
 import javax.inject.Inject
 
@@ -17,11 +18,13 @@ class AddLocationViewModel : BaseViewModel() {
     lateinit var interactor: AddLocationInteractor
 
     var searchForLocationStateLiveData: MutableLiveData<SearchForCityState> = MutableLiveData()
+    var loadCitiesStateLiveData: MutableLiveData<LoadCitiesState> = MutableLiveData()
 
     init {
         BaseApplication.applicationComponent.inject(this)
 
-        searchForLocationStateLiveData.value = idle()
+        searchForLocationStateLiveData.value = searchForCityIdle()
+        loadCitiesStateLiveData.value = loadCitiesDone()
 
         // TODO: figure out how to inject viewmodels using dagger so that we can inject them in the interactor
         interactor.addLocationViewModel = this
@@ -30,7 +33,8 @@ class AddLocationViewModel : BaseViewModel() {
     fun observeCityState(cityTextChangesObservable: Observable<CharSequence>) {
         if (disposables.size() == 0) {
             disposables.add(interactor
-                    .getStateObservable(cityTextChangesObservable)
+                    .getSearchBoxStateObservable(cityTextChangesObservable)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { state ->
                         searchForLocationStateLiveData.value = state
                     }
@@ -52,13 +56,13 @@ class AddLocationViewModel : BaseViewModel() {
 
 
     /**
-     * Models the UI state for the search box.
+     * State models for the UI.
      */
     companion object {
 
         class SearchForCityState(
                 val idle: Boolean,
-                val searching: Boolean,
+                val ongoing: Boolean,
                 val success: Boolean,
                 val error: Boolean,
                 val city: String,
@@ -66,9 +70,20 @@ class AddLocationViewModel : BaseViewModel() {
                 val throwable: Throwable? = null
         )
 
-        fun idle(city: String = ""): SearchForCityState = SearchForCityState(true, false, false, false, city)
-        fun searching(city: String): SearchForCityState = SearchForCityState(false, true, false, false, city)
-        fun success(city: String, locations: List<InternalLocation>): SearchForCityState = SearchForCityState(false, false, true, false, city, locations)
-        fun error(throwable: Throwable): SearchForCityState = SearchForCityState(false, false, false, true, "", arrayListOf(), throwable)
+        fun searchForCityIdle(city: String = ""): SearchForCityState = SearchForCityState(true, false, false, false, city)
+        fun searchForCityOngoing(city: String): SearchForCityState = SearchForCityState(false, true, false, false, city)
+        fun searchForCitySuccess(city: String, locations: List<InternalLocation>): SearchForCityState = SearchForCityState(false, false, true, false, city, locations)
+        fun searchForCityError(throwable: Throwable): SearchForCityState = SearchForCityState(false, false, false, true, "", arrayListOf(), throwable)
+
+        class LoadCitiesState(
+                val ongoing: Boolean,
+                val done: Boolean,
+                val error: Boolean,
+                val throwable: Throwable? = null
+        )
+
+        fun loadCitiesOngoing(): LoadCitiesState = LoadCitiesState(true, false, false)
+        fun loadCitiesDone(): LoadCitiesState = LoadCitiesState(false, true, false)
+        fun loadCitiesError(throwable: Throwable): LoadCitiesState = LoadCitiesState(false, false, true, throwable)
     }
 }

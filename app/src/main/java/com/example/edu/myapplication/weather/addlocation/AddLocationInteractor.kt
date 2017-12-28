@@ -60,17 +60,16 @@ class AddLocationInteractor @Inject constructor() {
         }
     }
 
-    fun getStateObservable(cityTextChanges: Observable<CharSequence>): Observable<AddLocationViewModel.Companion.SearchForCityState> {
+    fun getSearchBoxStateObservable(cityTextChanges: Observable<CharSequence>): Observable<AddLocationViewModel.Companion.SearchForCityState> {
         return cityTextChanges
                 .debounce(1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(AndroidSchedulers.mainThread())
                 // 1 - check text length and emit appropriate state
                 .map { city ->
                     when {
-                        city.length in 0..2 -> AddLocationViewModel.idle(city.toString())
-                        city.length >= 3 -> AddLocationViewModel.searching(city.toString())
-                        else -> AddLocationViewModel.error(RuntimeException("WTF has just happened?"))
+                        city.length in 0..2   -> AddLocationViewModel.searchForCityIdle(city.toString())
+                        city.length >= 3      -> AddLocationViewModel.searchForCityOngoing(city.toString())
+                        else                  -> AddLocationViewModel.searchForCityError(RuntimeException("WTF has just happened?"))
                     }
                 }
                 // 2 - update UI via live data
@@ -80,28 +79,31 @@ class AddLocationInteractor @Inject constructor() {
                 }
                 // 3 - handle errors gracefully until here
                 .onErrorReturn { throwable ->
-                    AddLocationViewModel.error(throwable)
+                    AddLocationViewModel.searchForCityError(throwable)
                 }
-                // 4 - do not query server if we are "idle"
+                // 4 - do not query server if we are "searchForCityIdle"
                 .filter { state ->
                     !state.idle
                 }
                 // 5 - query server if everything went fine so far
+                .observeOn(Schedulers.io())
                 .map { state ->
                     weatherApiClient.searchForLocation(state.city)
-                            .subscribeOn(Schedulers.io())
                             .map { returnedLocations ->
-                                AddLocationViewModel.success(state.city, returnedLocations)
+                                AddLocationViewModel.searchForCitySuccess(state.city, returnedLocations)
                             }
                             .onErrorReturn { throwable ->
-                                AddLocationViewModel.error(throwable)
+                                AddLocationViewModel.searchForCityError(throwable)
                             }
                             .blockingGet()
                 }
     }
 
     fun parseCities() {
+        addLocationViewModel.loadCitiesStateLiveData.value = AddLocationViewModel.loadCitiesOngoing()
+
         Single
+                // 1 - read file
                 .fromCallable {
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: FILE READING JOB STARTED")
                     val buffer = StringBuilder()
@@ -117,6 +119,7 @@ class AddLocationInteractor @Inject constructor() {
 
                     return@fromCallable buffer.toString()
                 }
+                // 2 - parse JSON
                 .map { jsonString: String ->
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: GSON JOB STARTED")
                     val gson = GsonBuilder().create()
@@ -125,16 +128,22 @@ class AddLocationInteractor @Inject constructor() {
 
                     return@map cities
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { cities: List<Location> ->
-                    Log.e("---------------", "===========> ${Thread.currentThread().name}: PARSED ${cities.size} cities")
-
-                    Realm.getDefaultInstance().executeTransactionAsync {
+                // 3 - store cities
+                .map { cities: List<Location> ->
+                    Realm.getDefaultInstance().executeTransaction {
                         Log.e("---------------", "===========> ${Thread.currentThread().name}: STORING CITIES...")
                         it.copyToRealmOrUpdate(cities)
                         Log.e("---------------", "===========> ${Thread.currentThread().name}: STORING CITIES DONE!!!")
                     }
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn { throwable ->
+                    addLocationViewModel.loadCitiesStateLiveData.value = AddLocationViewModel.loadCitiesError(throwable)
+                }
+                .toCompletable()
+                .subscribe {
+                    addLocationViewModel.loadCitiesStateLiveData.value = AddLocationViewModel.loadCitiesDone()
                 }
     }
 

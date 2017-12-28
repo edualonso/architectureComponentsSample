@@ -15,7 +15,7 @@ interface WeatherRepository {
     fun getLocationRx(location: InternalLocation): Single<GetLocationState>
 
     /**
-     * Models de state for searching locations in the repository.
+     * Models the state for searching locations in the repository.
      */
     companion object {
         class GetLocationState(
