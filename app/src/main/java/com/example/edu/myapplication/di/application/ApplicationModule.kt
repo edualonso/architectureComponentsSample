@@ -1,14 +1,23 @@
 package com.example.edu.myapplication.di.application
 
-import com.example.edu.myapplication.weather.addlocation.AddLocationActivity
+import android.content.Context
+import android.content.res.AssetManager
+import com.example.edu.myapplication.weather.base.BaseApplication
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
+import dagger.Provides
 
 /**
  * Created by edu on 24/12/2017.
  */
 @Module
-abstract class ApplicationModule {
-    @ContributesAndroidInjector
-    internal abstract fun contributesAddLocationActivityInjector(): AddLocationActivity
+class ApplicationModule {
+    @Provides
+    fun providesContext(baseApplication: BaseApplication): Context {
+        return baseApplication.applicationContext
+    }
+
+    @Provides
+    fun providesAssets(context: Context): AssetManager {
+        return context.assets
+    }
 }

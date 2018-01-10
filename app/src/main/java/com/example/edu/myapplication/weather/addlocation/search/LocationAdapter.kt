@@ -8,21 +8,23 @@ import android.view.ViewGroup
 import com.example.edu.myapplication.R
 import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.databinding.ViewLocationItemBinding
+import dagger.Reusable
 import javax.inject.Inject
 
 /**
  * Created by edu on 20/12/2017.
  */
+@Reusable
 class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
-    private var locationClickedLambda: ((location: InternalLocation) -> Unit) = {}
+    private var onLocationClickedLambda: ((location: InternalLocation) -> Unit)? = null
     private var locations = mutableListOf<InternalLocation>()
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         with(holder.locationItemBinding) {
             root.setOnClickListener {
-                locationClickedLambda(locations[position])
+                onLocationClickedLambda?.invoke(locations[position])
             }
             name.text = locations[position].name + " with ID ${locations[position].id}"
         }
@@ -47,8 +49,8 @@ class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapt
         }
     }
 
-    fun setLocationClickedLambda(locationClickedLambda: ((location: InternalLocation) -> Unit)) {
-        this.locationClickedLambda = locationClickedLambda
+    fun setOnLocationClickedLambda(locationClickedLambda: ((location: InternalLocation) -> Unit)) {
+        this.onLocationClickedLambda = locationClickedLambda
     }
 
     class LocationViewHolder(val locationItemBinding: ViewLocationItemBinding) : RecyclerView.ViewHolder(locationItemBinding.root)

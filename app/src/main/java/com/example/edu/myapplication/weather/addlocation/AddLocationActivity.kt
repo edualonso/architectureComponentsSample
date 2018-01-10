@@ -10,6 +10,8 @@ import android.view.View
 import com.example.edu.myapplication.R
 import com.example.edu.myapplication.databinding.ActivityMainBinding
 import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
+import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState
+import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState
 import com.example.edu.myapplication.weather.base.BaseActivity
 import com.jakewharton.rxbinding2.widget.RxTextView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,8 +21,6 @@ class AddLocationActivity : BaseActivity() {
 
     @Inject
     lateinit var locationAdapter: LocationAdapter
-    @Inject
-    lateinit var interactor: AddLocationInteractor
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: AddLocationViewModel        // TODO: inject this too
@@ -32,8 +32,8 @@ class AddLocationActivity : BaseActivity() {
         bindLiveData()
         setupRecyclerView()
 
-        if (interactor.countCities() == 0L) {
-            interactor.parseCities()
+        if (viewModel.interactor.countCities() == 0L) {
+            viewModel.interactor.parseCities()
         }
     }
 
@@ -45,19 +45,18 @@ class AddLocationActivity : BaseActivity() {
         viewModel.loadCitiesStateLiveData.observe(this, loadCitiesStateObserver)
 
         viewModel.observeCityState(RxTextView.textChanges(cityField))
-        viewModel.setCityListInputStream(assets.open("city_list.json"))
         binding.viewModel = viewModel
     }
 
     private fun setupRecyclerView() {
-        locationAdapter.setLocationClickedLambda(interactor.getLocationClickedLambda())
+        locationAdapter.setOnLocationClickedLambda(viewModel.interactor.getLocationClickedLambda())
 
         locationList.setHasFixedSize(true)
         locationList.layoutManager = LinearLayoutManager(this)
         locationList.adapter = locationAdapter
     }
 
-    private val searchForLocationsStateObserver = Observer<AddLocationViewModel.Companion.SearchForCityState> {
+    private val searchForLocationsStateObserver = Observer<SearchForCityState> {
         it?.apply {
             when {
                 it.success  -> {
@@ -72,7 +71,7 @@ class AddLocationActivity : BaseActivity() {
         }
     }
 
-    private val loadCitiesStateObserver = Observer<AddLocationViewModel.Companion.LoadCitiesState> {
+    private val loadCitiesStateObserver = Observer<LoadCitiesState> {
         it?.apply {
             when {
                 it.ongoing  -> progressContainer.visibility = View.VISIBLE

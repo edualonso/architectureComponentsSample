@@ -28,7 +28,10 @@ class BaseApplication : MultiDexApplication(), HasActivityInjector {
         // initialise Realm before Dagger (or else generating a RealmConfiguration will make Realm crash
         Realm.init(this);
 
-        applicationComponent = DaggerApplicationComponent.create()
+        applicationComponent = DaggerApplicationComponent
+                .builder()
+                .applicationContext(this)
+                .build()
         applicationComponent.inject(this)
 
 //        Realm.setDefaultConfiguration(realmConfiguration)

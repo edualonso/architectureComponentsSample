@@ -1,11 +1,21 @@
 package com.example.edu.myapplication.weather.addlocation
 
+import android.content.res.AssetManager
 import android.util.Log
 import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.data.model.openweather.Location
 import com.example.edu.myapplication.data.repository.WeatherRepository
 import com.example.edu.myapplication.data.repository.memory.MemoryWeatherRepository
 import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
+import com.example.edu.myapplication.util.JsonParsingUtil
+import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState.Companion.loadCitiesDone
+import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState.Companion.loadCitiesError
+import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState.Companion.loadCitiesOngoing
+import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState
+import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCityError
+import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCityIdle
+import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCityOngoing
+import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCitySuccess
 import com.example.edu.myapplication.weather.base.BaseApplication
 import com.google.gson.GsonBuilder
 import io.reactivex.Observable
@@ -13,9 +23,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,13 +33,11 @@ import javax.inject.Singleton
 @Singleton
 class AddLocationInteractor @Inject constructor() {
 
-    @Inject
-    lateinit var weatherApiClient: ApixuWeatherApiClient
-    @Inject
-    lateinit var weatherRepository: MemoryWeatherRepository
+    @Inject lateinit var weatherApiClient: ApixuWeatherApiClient
+    @Inject lateinit var weatherRepository: MemoryWeatherRepository
+    @Inject lateinit var assetManager: AssetManager
 
     lateinit var addLocationViewModel: AddLocationViewModel
-    lateinit var cityListInputStream: InputStream
 
     init {
         BaseApplication.applicationComponent.inject(this)
@@ -60,16 +65,16 @@ class AddLocationInteractor @Inject constructor() {
         }
     }
 
-    fun getSearchBoxStateObservable(cityTextChanges: Observable<CharSequence>): Observable<AddLocationViewModel.Companion.SearchForCityState> {
+    fun getSearchBoxStateObservable(cityTextChanges: Observable<CharSequence>): Observable<SearchForCityState> {
         return cityTextChanges
                 .debounce(1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 // 1 - check text length and emit appropriate state
                 .map { city ->
                     when {
-                        city.length in 0..2   -> AddLocationViewModel.searchForCityIdle(city.toString())
-                        city.length >= 3      -> AddLocationViewModel.searchForCityOngoing(city.toString())
-                        else                  -> AddLocationViewModel.searchForCityError(RuntimeException("WTF has just happened?"))
+                        city.length in 0..2   -> searchForCityIdle(city.toString())
+                        city.length >= 3      -> searchForCityOngoing(city.toString())
+                        else                  -> searchForCityError(RuntimeException("WTF has just happened?"))
                     }
                 }
                 // 2 - update UI via live data
@@ -79,7 +84,7 @@ class AddLocationInteractor @Inject constructor() {
                 }
                 // 3 - handle errors gracefully until here
                 .onErrorReturn { throwable ->
-                    AddLocationViewModel.searchForCityError(throwable)
+                    searchForCityError(throwable)
                 }
                 // 4 - do not query server if we are "searchForCityIdle"
                 .filter { state ->
@@ -90,42 +95,31 @@ class AddLocationInteractor @Inject constructor() {
                 .map { state ->
                     weatherApiClient.searchForLocation(state.city)
                             .map { returnedLocations ->
-                                AddLocationViewModel.searchForCitySuccess(state.city, returnedLocations)
+                                searchForCitySuccess(state.city, returnedLocations)
                             }
                             .onErrorReturn { throwable ->
-                                AddLocationViewModel.searchForCityError(throwable)
+                                searchForCityError(throwable)
                             }
                             .blockingGet()
                 }
     }
 
     fun parseCities() {
-        addLocationViewModel.loadCitiesStateLiveData.value = AddLocationViewModel.loadCitiesOngoing()
+        addLocationViewModel.loadCitiesStateLiveData.value = loadCitiesOngoing()
 
         Single
                 // 1 - read file
                 .fromCallable {
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: FILE READING JOB STARTED")
-                    val buffer = StringBuilder()
-                    val bufferedReader = BufferedReader(InputStreamReader(cityListInputStream, "UTF-8"))
-                    var jsonString: String
-
-                    while (true) {
-                        jsonString = bufferedReader.readLine() ?: break
-                        buffer.append(jsonString)
-                    }
-                    cityListInputStream.close()
+                    val buffer = JsonParsingUtil.readFile(assetManager.open(ROUTE_TO_CITY_LIST))
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: FILE READING JOB FINISHED")
-
-                    return@fromCallable buffer.toString()
+                    return@fromCallable buffer
                 }
                 // 2 - parse JSON
                 .map { jsonString: String ->
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: GSON JOB STARTED")
-                    val gson = GsonBuilder().create()
-                    val cities: List<Location> = gson.fromJson(jsonString, Array<Location>::class.java).toList()
+                    val cities: List<Location> = GsonBuilder().create().fromJson(jsonString, Array<Location>::class.java).toList()
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: GSON JOB FINISHED")
-
                     return@map cities
                 }
                 // 3 - store cities
@@ -139,11 +133,11 @@ class AddLocationInteractor @Inject constructor() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .onErrorReturn { throwable ->
-                    addLocationViewModel.loadCitiesStateLiveData.value = AddLocationViewModel.loadCitiesError(throwable)
+                    addLocationViewModel.loadCitiesStateLiveData.value = loadCitiesError(throwable)
                 }
                 .toCompletable()
                 .subscribe {
-                    addLocationViewModel.loadCitiesStateLiveData.value = AddLocationViewModel.loadCitiesDone()
+                    addLocationViewModel.loadCitiesStateLiveData.value = loadCitiesDone()
                 }
     }
 
@@ -151,5 +145,9 @@ class AddLocationInteractor @Inject constructor() {
         val numCities = Realm.getDefaultInstance().where(Location::class.java).count()
         Log.e("---------------", "===========> THERE ARE $numCities CITIES STORED IN THE DATABASE")
         return numCities
+    }
+
+    companion object {
+        const val ROUTE_TO_CITY_LIST = "city_list.json"
     }
 }
