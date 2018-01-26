@@ -9,6 +9,7 @@ import com.example.edu.myapplication.weather.base.BaseApplication
 import com.example.edu.myapplication.weather.base.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -19,33 +20,53 @@ class AddLocationViewModel : BaseViewModel() {
     @Inject
     lateinit var interactor: AddLocationInteractor
 
-    var searchForLocationStateLiveData: MutableLiveData<SearchForCityState> = MutableLiveData()
+    var searchForCityStateLiveData: MutableLiveData<SearchForCityState> = MutableLiveData()
     var loadCitiesStateLiveData: MutableLiveData<LoadCitiesState> = MutableLiveData()
 
     init {
         BaseApplication.applicationComponent.inject(this)
 
-        searchForLocationStateLiveData.value = searchForCityIdle()
+        searchForCityStateLiveData.value = searchForCityIdle()
         loadCitiesStateLiveData.value = loadCitiesDone()
-
-        // TODO: figure out how to inject viewmodels using dagger so that we can inject them in the interactor
-        interactor.addLocationViewModel = this
     }
 
     fun observeCityState(cityTextChangesObservable: Observable<CharSequence>) {
         if (disposables.size() == 0) {
-            disposables.add(interactor
-                    .getSearchBoxStateObservable(cityTextChangesObservable)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { state ->
-                        searchForLocationStateLiveData.value = state
-                    }
+            disposables.add(
+                    interactor.getSearchBoxStateObservable(cityTextChangesObservable)
+                            .doOnNext { state ->
+                                searchForCityStateLiveData.value = state
+                            }
+                            // do not query server if we are "searchForCityIdle"
+                            .filter { state ->
+                                !state.idle
+                            }
+                            // query server if everything went fine so far
+                            .observeOn(Schedulers.io())
+                            .map { state ->
+                                interactor.getLocationWithState(state)
+                            }
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe { state ->
+                                searchForCityStateLiveData.value = state
+                            }
             )
         }
     }
 
     fun parseCities() {
+        loadCitiesStateLiveData.value = LoadCitiesState.loadCitiesOngoing()
+
         interactor.parseCities()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { throwable ->
+                    loadCitiesStateLiveData.value = LoadCitiesState.loadCitiesError(throwable)
+                }
+                .onErrorComplete()
+                .subscribe {
+                    loadCitiesStateLiveData.value = LoadCitiesState.loadCitiesDone()
+                }
     }
 
     fun countCities() {

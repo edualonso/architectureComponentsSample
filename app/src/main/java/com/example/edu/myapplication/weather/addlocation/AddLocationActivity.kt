@@ -33,7 +33,7 @@ class AddLocationActivity : BaseActivity() {
         setupRecyclerView()
 
         if (viewModel.interactor.countCities() == 0L) {
-            viewModel.interactor.parseCities()
+            viewModel.parseCities()
         }
     }
 
@@ -41,7 +41,7 @@ class AddLocationActivity : BaseActivity() {
     override fun bindLiveData() {
         viewModel = ViewModelProviders.of(this).get(AddLocationViewModel::class.java)
 
-        viewModel.searchForLocationStateLiveData.observe(this, searchForLocationsStateObserver)
+        viewModel.searchForCityStateLiveData.observe(this, searchForLocationsStateObserver)
         viewModel.loadCitiesStateLiveData.observe(this, loadCitiesStateObserver)
 
         viewModel.observeCityState(RxTextView.textChanges(cityField))
@@ -49,7 +49,7 @@ class AddLocationActivity : BaseActivity() {
     }
 
     private fun setupRecyclerView() {
-        locationAdapter.setOnLocationClickedLambda(viewModel.interactor.getLocationClickedLambda())
+//        locationAdapter.setOnLocationClickedLambda(viewModel.interactor.getLocationClickedLambda())
 
         locationList.setHasFixedSize(true)
         locationList.layoutManager = LinearLayoutManager(this)

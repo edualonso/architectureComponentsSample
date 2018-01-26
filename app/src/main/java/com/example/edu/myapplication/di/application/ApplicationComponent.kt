@@ -7,6 +7,7 @@ import com.example.edu.myapplication.di.modules.NetworkModule
 import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
 import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
 import com.example.edu.myapplication.weather.addlocation.AddLocationViewModel
+import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
 import com.example.edu.myapplication.weather.base.BaseApplication
 import dagger.BindsInstance
 import dagger.Component
@@ -41,5 +42,6 @@ interface ApplicationComponent {
     fun inject(weatherApiClient: ApixuWeatherApiClient)
     fun inject(addLocationViewModel: AddLocationViewModel)      // TODO: can we do this more abstract?
     fun inject(addLocationInteractor: AddLocationInteractor)    // TODO: can we do this more abstract?
+    fun inject(locationAdapter: LocationAdapter)                // TODO: can we do this more abstract?
 
 }
