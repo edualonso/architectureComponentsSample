@@ -11,10 +11,4 @@ abstract class BaseActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
     }
-
-    /**
-     * Use this method to bind any view observers to live data objects inside view models.
-     */
-    abstract fun bindLiveData()
-
 }
