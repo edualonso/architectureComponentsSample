@@ -2,7 +2,7 @@ package com.example.edu.myapplication.di.application
 
 import android.content.Context
 import android.content.res.AssetManager
-import com.example.edu.myapplication.weather.base.BaseApplication
+import com.example.edu.myapplication.base.BaseApplication
 import dagger.Module
 import dagger.Provides
 

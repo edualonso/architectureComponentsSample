@@ -13,7 +13,7 @@ import com.example.edu.myapplication.weather.addlocation.state.SearchForCityStat
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCityIdle
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCityOngoing
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCitySuccess
-import com.example.edu.myapplication.weather.base.BaseApplication
+import com.example.edu.myapplication.base.BaseApplication
 import com.google.gson.GsonBuilder
 import io.reactivex.Completable
 import io.reactivex.Observable

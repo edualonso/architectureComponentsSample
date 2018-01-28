@@ -1,5 +1,6 @@
 package com.example.edu.myapplication.di.application
 
+import com.example.edu.myapplication.main.MainActivity
 import com.example.edu.myapplication.weather.addlocation.AddLocationActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -9,6 +10,9 @@ import dagger.android.ContributesAndroidInjector
  */
 @Module
 abstract class ApplicationBuildersModule {
+    @ContributesAndroidInjector
+    internal abstract fun contributesMainActivityInjector(): MainActivity
+
     @ContributesAndroidInjector
     internal abstract fun contributesAddLocationActivityInjector(): AddLocationActivity
 }

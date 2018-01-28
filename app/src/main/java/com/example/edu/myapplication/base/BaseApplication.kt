@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.weather.base
+package com.example.edu.myapplication.base
 
 import android.app.Activity
 import android.support.multidex.MultiDexApplication
@@ -16,11 +16,8 @@ import javax.inject.Inject
  */
 class BaseApplication : MultiDexApplication(), HasActivityInjector {
 
-    @Inject
-    lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
-
-    @Inject
-    lateinit var realmConfiguration: RealmConfiguration
+    @Inject lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
+    @Inject lateinit var realmConfiguration: RealmConfiguration
 
     override fun onCreate() {
         super.onCreate()

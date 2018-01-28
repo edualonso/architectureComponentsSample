@@ -8,7 +8,11 @@ import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
 import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
 import com.example.edu.myapplication.weather.addlocation.AddLocationViewModel
 import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
-import com.example.edu.myapplication.weather.base.BaseApplication
+import com.example.edu.myapplication.base.BaseApplication
+import com.example.edu.myapplication.main.MainActivity
+import com.example.edu.myapplication.main.MainInteractor
+import com.example.edu.myapplication.main.MainViewModel
+import com.example.edu.myapplication.weather.addlocation.AddLocationActivity
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -29,7 +33,7 @@ import javax.inject.Singleton
         NetworkModule::class,
         ConstModule::class
 ))
-interface ApplicationComponent {
+abstract class ApplicationComponent {
 
     @Component.Builder
     interface Builder {
@@ -38,10 +42,12 @@ interface ApplicationComponent {
         fun build(): ApplicationComponent
     }
 
-    fun inject(baseApplication: BaseApplication)
-    fun inject(weatherApiClient: ApixuWeatherApiClient)
-    fun inject(addLocationViewModel: AddLocationViewModel)      // TODO: can we do this more abstract?
-    fun inject(addLocationInteractor: AddLocationInteractor)    // TODO: can we do this more abstract?
-    fun inject(locationAdapter: LocationAdapter)                // TODO: can we do this more abstract?
+    abstract fun inject(baseApplication: BaseApplication)
+    abstract fun inject(weatherApiClient: ApixuWeatherApiClient)
+    abstract fun inject(mainViewModel: MainViewModel)                       // TODO: can we do this more abstract?
+    abstract fun inject(addLocationViewModel: AddLocationViewModel)         // TODO: can we do this more abstract?
+    abstract fun inject(mainInteractor: MainInteractor)                     // TODO: can we do this more abstract?
+    abstract fun inject(addLocationInteractor: AddLocationInteractor)       // TODO: can we do this more abstract?
+    abstract fun inject(locationAdapter: LocationAdapter)                   // TODO: can we do this more abstract?
 
 }

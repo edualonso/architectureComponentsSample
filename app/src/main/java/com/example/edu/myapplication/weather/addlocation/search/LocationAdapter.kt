@@ -9,7 +9,7 @@ import com.example.edu.myapplication.R
 import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.databinding.ViewLocationItemBinding
 import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
-import com.example.edu.myapplication.weather.base.BaseApplication
+import com.example.edu.myapplication.base.BaseApplication
 import dagger.Reusable
 import javax.inject.Inject
 

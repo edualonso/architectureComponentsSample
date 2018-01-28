@@ -8,49 +8,41 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.example.edu.myapplication.R
-import com.example.edu.myapplication.databinding.ActivityMainBinding
+import com.example.edu.myapplication.base.BaseActivity
+import com.example.edu.myapplication.databinding.ActivityAddLocationBinding
 import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
 import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState
-import com.example.edu.myapplication.weather.base.BaseActivity
 import com.jakewharton.rxbinding2.widget.RxTextView
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_add_location.*
 import javax.inject.Inject
 
 class AddLocationActivity : BaseActivity() {
 
-    @Inject
-    lateinit var locationAdapter: LocationAdapter
+    @Inject lateinit var locationAdapter: LocationAdapter
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityAddLocationBinding
     private lateinit var viewModel: AddLocationViewModel        // TODO: inject this too
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        bindLiveData()
-        setupRecyclerView()
-
-        if (viewModel.interactor.countCities() == 0L) {
-            viewModel.parseCities()
-        }
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_add_location)
+        initViewModel()
+        initRecyclerView()
     }
 
     @SuppressLint("SetTextI18n")
-    override fun bindLiveData() {
-        viewModel = ViewModelProviders.of(this).get(AddLocationViewModel::class.java)
-
+    private fun initViewModel() {
+        viewModel = ViewModelProviders
+                .of(this)
+                .get(AddLocationViewModel::class.java)
         viewModel.searchForCityStateLiveData.observe(this, searchForLocationsStateObserver)
-        viewModel.loadCitiesStateLiveData.observe(this, loadCitiesStateObserver)
-
         viewModel.observeCityState(RxTextView.textChanges(cityField))
         binding.viewModel = viewModel
     }
 
-    private fun setupRecyclerView() {
-//        locationAdapter.setOnLocationClickedLambda(viewModel.interactor.getLocationClickedLambda())
-
+    private fun initRecyclerView() {
         locationList.setHasFixedSize(true)
         locationList.layoutManager = LinearLayoutManager(this)
         locationList.adapter = locationAdapter
@@ -71,21 +63,10 @@ class AddLocationActivity : BaseActivity() {
         }
     }
 
-    private val loadCitiesStateObserver = Observer<LoadCitiesState> {
-        it?.apply {
-            when {
-                it.ongoing  -> progressContainer.visibility = View.VISIBLE
-                it.done     -> progressContainer.visibility = View.GONE
-                it.error    -> {
-                    progressContainer.visibility = View.GONE
-                    message.text = "ERROR LOADING CITIES: (${it.throwable?.message})"
-                }
-                else        -> {
-                    progressContainer.visibility = View.GONE
-                    message.text = "WTF?!?!?! (LOADING CITIES)"
-                }
-            }
-        }
+    companion object {
+        const val EXTRA_PROVIDER = "EXTRA_PROVIDER"
+        const val PROVIDER_APIXU = 0
+        const val PROVIDER_OPENWEAHTER = 1
     }
 }
 

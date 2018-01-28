@@ -6,7 +6,7 @@ import com.example.edu.myapplication.data.model.apixu.Location
 import com.example.edu.myapplication.data.model.toInternalLocation
 import com.example.edu.myapplication.data.model.toInternalWeather
 import com.example.edu.myapplication.network.WeatherApiClient
-import com.example.edu.myapplication.weather.base.BaseApplication
+import com.example.edu.myapplication.base.BaseApplication
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton

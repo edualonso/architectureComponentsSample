@@ -1,12 +1,10 @@
 package com.example.edu.myapplication.weather.addlocation
 
 import android.arch.lifecycle.MutableLiveData
-import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState
-import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState.Companion.loadCitiesDone
+import com.example.edu.myapplication.base.BaseApplication
+import com.example.edu.myapplication.base.BaseViewModel
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCityIdle
-import com.example.edu.myapplication.weather.base.BaseApplication
-import com.example.edu.myapplication.weather.base.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -17,17 +15,14 @@ import javax.inject.Inject
  */
 class AddLocationViewModel : BaseViewModel() {
 
-    @Inject
-    lateinit var interactor: AddLocationInteractor
+    @Inject lateinit var interactor: AddLocationInteractor
 
     var searchForCityStateLiveData: MutableLiveData<SearchForCityState> = MutableLiveData()
-    var loadCitiesStateLiveData: MutableLiveData<LoadCitiesState> = MutableLiveData()
 
     init {
         BaseApplication.applicationComponent.inject(this)
 
         searchForCityStateLiveData.value = searchForCityIdle()
-        loadCitiesStateLiveData.value = loadCitiesDone()
     }
 
     fun observeCityState(cityTextChangesObservable: Observable<CharSequence>) {
@@ -52,24 +47,5 @@ class AddLocationViewModel : BaseViewModel() {
                             }
             )
         }
-    }
-
-    fun parseCities() {
-        loadCitiesStateLiveData.value = LoadCitiesState.loadCitiesOngoing()
-
-        interactor.parseCities()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { throwable ->
-                    loadCitiesStateLiveData.value = LoadCitiesState.loadCitiesError(throwable)
-                }
-                .onErrorComplete()
-                .subscribe {
-                    loadCitiesStateLiveData.value = LoadCitiesState.loadCitiesDone()
-                }
-    }
-
-    fun countCities() {
-        interactor.countCities()
     }
 }

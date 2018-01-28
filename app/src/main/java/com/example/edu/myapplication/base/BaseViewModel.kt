@@ -1,4 +1,4 @@
-package com.example.edu.myapplication.weather.base
+package com.example.edu.myapplication.base
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
@@ -8,6 +8,7 @@ import io.reactivex.disposables.CompositeDisposable
  */
 open class BaseViewModel : ViewModel() {
 
+    // add reactive streams here
     protected val disposables = CompositeDisposable()
 
     override fun onCleared() {
