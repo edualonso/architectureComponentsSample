@@ -17,8 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class ApixuWeatherApiClient @Inject constructor() : WeatherApiClient {
 
-    @Inject
-    lateinit var apixuWeatherService: ApixuWeatherService
+    @Inject lateinit var apixuWeatherService: ApixuWeatherService
 
     init {
         BaseApplication.applicationComponent.inject(this)

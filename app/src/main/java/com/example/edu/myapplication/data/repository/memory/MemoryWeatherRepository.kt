@@ -2,9 +2,6 @@ package com.example.edu.myapplication.data.repository.memory
 
 import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.data.repository.WeatherRepository
-import com.example.edu.myapplication.data.repository.WeatherRepository.Companion.error
-import com.example.edu.myapplication.data.repository.WeatherRepository.Companion.locationExists
-import com.example.edu.myapplication.data.repository.WeatherRepository.Companion.notFound
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -33,17 +30,18 @@ class MemoryWeatherRepository @Inject constructor(): WeatherRepository {
         return locations[location.name]
     }
 
-    override fun getLocationRx(location: InternalLocation): Single<WeatherRepository.Companion.GetLocationState> {
-        return Single.create<WeatherRepository.Companion.GetLocationState> {
+    override fun getLocationRx(location: InternalLocation): Single<WeatherRepository.GetLocationState> {
+
+        return Single.create<WeatherRepository.GetLocationState> {
             val searchedLocation = locations[location.name]
             try {
                 if (searchedLocation != null) {
-                    it.onSuccess(locationExists(location))
+                    it.onSuccess(WeatherRepository.GetLocationState.Exists(location))
                 } else {
-                    it.onSuccess(notFound(location))
+                    it.onSuccess(WeatherRepository.GetLocationState.NotFound(location))
                 }
             } catch (e: Exception) {
-                it.onSuccess(error(location, e))
+                it.onSuccess(WeatherRepository.GetLocationState.Error(location, e))
             }
         }
     }

@@ -54,7 +54,9 @@ class MainViewModel constructor(
     /**
      * Viewmodel factory. Needed to pass the router.
      */
-    class Factory(private val mainRouter: MainRouter) : ViewModelProvider.Factory {
+    class Factory(
+            private val mainRouter: MainRouter
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return MainViewModel(mainRouter) as T
         }

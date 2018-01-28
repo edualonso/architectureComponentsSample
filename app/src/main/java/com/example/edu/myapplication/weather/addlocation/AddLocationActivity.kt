@@ -22,20 +22,27 @@ class AddLocationActivity : BaseActivity() {
     @Inject lateinit var locationAdapter: LocationAdapter
 
     private lateinit var binding: ActivityAddLocationBinding
-    private lateinit var viewModel: AddLocationViewModel        // TODO: inject this too
+    private lateinit var viewModel: AddLocationViewModel            // TODO: inject this too
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_location)
+
         initViewModel()
         initRecyclerView()
     }
 
     @SuppressLint("SetTextI18n")
     private fun initViewModel() {
+        val provider = when (intent.getIntExtra(EXTRA_PROVIDER, PROVIDER_OPENWEAHTER)) {
+            PROVIDER_APIXU          -> AddLocationInteractor.WeatherProvider.Apixu()
+            PROVIDER_OPENWEAHTER    -> AddLocationInteractor.WeatherProvider.OpenWeather()
+            else                    -> throw AssertionError("Invalid provider")
+        }
+
         viewModel = ViewModelProviders
-                .of(this)
+                .of(this, AddLocationViewModel.Factory(provider))
                 .get(AddLocationViewModel::class.java)
         viewModel.searchForCityStateLiveData.observe(this, searchForLocationsStateObserver)
         viewModel.observeCityState(RxTextView.textChanges(cityField))
@@ -49,16 +56,15 @@ class AddLocationActivity : BaseActivity() {
     }
 
     private val searchForLocationsStateObserver = Observer<SearchForCityState> {
-        it?.apply {
-            when {
-                it.success  -> {
-                    message.text = "SUCCESS: ${it.city}"
-                    locationAdapter.setLocations(it.locations)
+        if (it != null) {
+            when (it) {
+                is SearchForCityState.Idle      -> message.text = "IDLE: ${it.city}"
+                is SearchForCityState.Ongoing   -> message.text = "SEARCHING: ${it.city}"
+                is SearchForCityState.Error     -> message.text = "ERROR SEARCHING FOR LOCATION ${it.city}: ${it.throwable!!.message}"
+                is SearchForCityState.Success   -> with (it) {
+                    message.text = "SUCCESS: ${city}"
+                    locationAdapter.setLocations(locations)
                 }
-                it.idle     -> message.text = "IDLE: ${it.city}"
-                it.ongoing  -> message.text = "SEARCHING: ${it.city}"
-                it.error    -> message.text = "ERROR SEARCHINF FOR LOCATION ${it.city}: ${it.throwable!!.message}"
-                else        -> message.text = "WTF?!?!?! (SEARCHING FOR LOCATION): ${it.city}"
             }
         }
     }

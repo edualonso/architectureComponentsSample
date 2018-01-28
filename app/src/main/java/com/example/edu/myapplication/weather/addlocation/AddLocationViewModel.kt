@@ -1,10 +1,13 @@
 package com.example.edu.myapplication.weather.addlocation
 
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import com.example.edu.myapplication.base.BaseApplication
 import com.example.edu.myapplication.base.BaseViewModel
+import com.example.edu.myapplication.main.MainRouter
+import com.example.edu.myapplication.main.MainViewModel
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState
-import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState.Companion.searchForCityIdle
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -13,7 +16,9 @@ import javax.inject.Inject
 /**
  * Created by edu on 19/12/2017.
  */
-class AddLocationViewModel : BaseViewModel() {
+class AddLocationViewModel(
+        weatherProvider: AddLocationInteractor.WeatherProvider
+) : BaseViewModel() {
 
     @Inject lateinit var interactor: AddLocationInteractor
 
@@ -22,7 +27,9 @@ class AddLocationViewModel : BaseViewModel() {
     init {
         BaseApplication.applicationComponent.inject(this)
 
-        searchForCityStateLiveData.value = searchForCityIdle()
+        searchForCityStateLiveData.value = SearchForCityState.Idle()
+
+        interactor.weatherProvider = weatherProvider
     }
 
     fun observeCityState(cityTextChangesObservable: Observable<CharSequence>) {
@@ -34,7 +41,7 @@ class AddLocationViewModel : BaseViewModel() {
                             }
                             // do not query server if we are "searchForCityIdle"
                             .filter { state ->
-                                !state.idle
+                                state !is SearchForCityState.Idle
                             }
                             // query server if everything went fine so far
                             .observeOn(Schedulers.io())
@@ -46,6 +53,17 @@ class AddLocationViewModel : BaseViewModel() {
                                 searchForCityStateLiveData.value = state
                             }
             )
+        }
+    }
+
+    /**
+     * Viewmodel factory. Needed to pass the router.
+     */
+    class Factory(
+            private val weatherProvider: AddLocationInteractor.WeatherProvider
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return AddLocationViewModel(weatherProvider) as T
         }
     }
 }

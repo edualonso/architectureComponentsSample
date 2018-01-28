@@ -12,6 +12,7 @@ import com.example.edu.myapplication.base.BaseApplication
 import com.example.edu.myapplication.main.MainActivity
 import com.example.edu.myapplication.main.MainInteractor
 import com.example.edu.myapplication.main.MainViewModel
+import com.example.edu.myapplication.network.openweather.OpenWeatherApiClient
 import com.example.edu.myapplication.weather.addlocation.AddLocationActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -44,6 +45,7 @@ abstract class ApplicationComponent {
 
     abstract fun inject(baseApplication: BaseApplication)
     abstract fun inject(weatherApiClient: ApixuWeatherApiClient)
+    abstract fun inject(openWeatherApiClient: OpenWeatherApiClient)
     abstract fun inject(mainViewModel: MainViewModel)                       // TODO: can we do this more abstract?
     abstract fun inject(addLocationViewModel: AddLocationViewModel)         // TODO: can we do this more abstract?
     abstract fun inject(mainInteractor: MainInteractor)                     // TODO: can we do this more abstract?
