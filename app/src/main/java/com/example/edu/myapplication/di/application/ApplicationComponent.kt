@@ -1,25 +1,21 @@
 package com.example.edu.myapplication.di.application
 
+import com.example.edu.myapplication.base.BaseApplication
 import com.example.edu.myapplication.di.activity.ActivityModule
 import com.example.edu.myapplication.di.modules.ConstModule
 import com.example.edu.myapplication.di.modules.DatabaseModule
 import com.example.edu.myapplication.di.modules.NetworkModule
+import com.example.edu.myapplication.main.MainInteractor
+import com.example.edu.myapplication.main.MainViewModel
 import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
+import com.example.edu.myapplication.network.openweather.OpenWeatherApiClient
 import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
 import com.example.edu.myapplication.weather.addlocation.AddLocationViewModel
 import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
-import com.example.edu.myapplication.base.BaseApplication
-import com.example.edu.myapplication.main.MainActivity
-import com.example.edu.myapplication.main.MainInteractor
-import com.example.edu.myapplication.main.MainViewModel
-import com.example.edu.myapplication.network.openweather.OpenWeatherApiClient
-import com.example.edu.myapplication.weather.addlocation.AddLocationActivity
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import javax.inject.Singleton
-
-
 
 /**
  * Created by edu on 24/12/2017.

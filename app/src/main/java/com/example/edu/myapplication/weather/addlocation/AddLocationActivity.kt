@@ -6,23 +6,20 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
 import com.example.edu.myapplication.R
 import com.example.edu.myapplication.base.BaseActivity
 import com.example.edu.myapplication.databinding.ActivityAddLocationBinding
+import com.example.edu.myapplication.weather.addlocation.apixu.ApixuAddLocationInteractor
+import com.example.edu.myapplication.weather.addlocation.openweather.OpenWeatherAddLocationInteractor
 import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
-import com.example.edu.myapplication.weather.addlocation.state.LoadCitiesState
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState
 import com.jakewharton.rxbinding2.widget.RxTextView
 import kotlinx.android.synthetic.main.activity_add_location.*
-import javax.inject.Inject
 
 class AddLocationActivity : BaseActivity() {
 
-    @Inject lateinit var locationAdapter: LocationAdapter
-
     private lateinit var binding: ActivityAddLocationBinding
-    private lateinit var viewModel: AddLocationViewModel            // TODO: inject this too
+    private lateinit var viewModel: AddLocationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +32,16 @@ class AddLocationActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun initViewModel() {
-        val provider = when (intent.getIntExtra(EXTRA_PROVIDER, PROVIDER_OPENWEAHTER)) {
-            PROVIDER_APIXU          -> AddLocationInteractor.WeatherProvider.Apixu()
-            PROVIDER_OPENWEAHTER    -> AddLocationInteractor.WeatherProvider.OpenWeather()
+        val factory = when (intent.getIntExtra(EXTRA_PROVIDER, PROVIDER_OPENWEAHTER)) {
+            PROVIDER_APIXU          -> AddLocationViewModel.Factory(ApixuAddLocationInteractor())
+            PROVIDER_OPENWEAHTER    -> AddLocationViewModel.Factory(OpenWeatherAddLocationInteractor())
             else                    -> throw AssertionError("Invalid provider")
         }
 
         viewModel = ViewModelProviders
-                .of(this, AddLocationViewModel.Factory(provider))
+                .of(this, factory)
                 .get(AddLocationViewModel::class.java)
+
         viewModel.searchForCityStateLiveData.observe(this, searchForLocationsStateObserver)
         viewModel.observeCityState(RxTextView.textChanges(cityField))
         binding.viewModel = viewModel
@@ -52,7 +50,10 @@ class AddLocationActivity : BaseActivity() {
     private fun initRecyclerView() {
         locationList.setHasFixedSize(true)
         locationList.layoutManager = LinearLayoutManager(this)
-        locationList.adapter = locationAdapter
+        LocationAdapter().apply {
+            addLocationInteractor = viewModel.interactor
+            locationList.adapter = this
+        }
     }
 
     private val searchForLocationsStateObserver = Observer<SearchForCityState> {
@@ -63,7 +64,7 @@ class AddLocationActivity : BaseActivity() {
                 is SearchForCityState.Error     -> message.text = "ERROR SEARCHING FOR LOCATION ${it.city}: ${it.throwable!!.message}"
                 is SearchForCityState.Success   -> with (it) {
                     message.text = "SUCCESS: ${city}"
-                    locationAdapter.setLocations(locations)
+                    (locationList.adapter as LocationAdapter).setLocations(locations)
                 }
             }
         }

@@ -6,10 +6,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.edu.myapplication.R
+import com.example.edu.myapplication.base.BaseApplication
 import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.databinding.ViewLocationItemBinding
 import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
-import com.example.edu.myapplication.base.BaseApplication
 import dagger.Reusable
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapt
 
     private var locations = mutableListOf<InternalLocation>()
 
-    @Inject lateinit var addLocationInteractor: AddLocationInteractor
+    lateinit var addLocationInteractor: AddLocationInteractor
 
     init {
         BaseApplication.applicationComponent.inject(this)
@@ -56,7 +56,7 @@ class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapt
         }
     }
 
-    fun onLocationClicked(location: InternalLocation) {
+    private fun onLocationClicked(location: InternalLocation) {
         addLocationInteractor.getLocation(location)
     }
 

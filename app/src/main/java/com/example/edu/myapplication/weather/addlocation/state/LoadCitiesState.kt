@@ -1,7 +1,7 @@
 package com.example.edu.myapplication.weather.addlocation.state
 
 /**
- * Created by edu on 10/01/2018.
+ * Class that models the different states of the initial setup process for loading OpenWeather cities.
  */
 class LoadCitiesState(
         val ongoing: Boolean,
