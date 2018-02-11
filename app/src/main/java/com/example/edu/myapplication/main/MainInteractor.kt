@@ -3,7 +3,7 @@ package com.example.edu.myapplication.main
 import android.content.res.AssetManager
 import android.util.Log
 import com.example.edu.myapplication.base.BaseApplication
-import com.example.edu.myapplication.data.model.openweather.Location
+import com.example.edu.myapplication.data.model.openweather.OpenWeatherLocation
 import com.example.edu.myapplication.util.JsonParsingUtil
 import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
 import com.google.gson.GsonBuilder
@@ -37,12 +37,12 @@ class MainInteractor @Inject constructor() {
                 // 2 - parse JSON
                 .map { jsonString: String ->
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: GSON JOB STARTED")
-                    val cities: List<Location> = GsonBuilder().create().fromJson(jsonString, Array<Location>::class.java).toList()
+                    val cities: List<OpenWeatherLocation> = GsonBuilder().create().fromJson(jsonString, Array<OpenWeatherLocation>::class.java).toList()
                     Log.e("---------------", "===========> ${Thread.currentThread().name}: GSON JOB FINISHED")
                     return@map cities
                 }
                 // 3 - store cities
-                .map { cities: List<Location> ->
+                .map { cities: List<OpenWeatherLocation> ->
                     Realm.getDefaultInstance().executeTransaction {
                         Log.e("---------------", "===========> ${Thread.currentThread().name}: STORING CITIES...")
                         it.copyToRealmOrUpdate(cities)
@@ -53,7 +53,7 @@ class MainInteractor @Inject constructor() {
     }
 
     fun countCities(): Long {
-        val numCities = Realm.getDefaultInstance().where(Location::class.java).count()
+        val numCities = Realm.getDefaultInstance().where(OpenWeatherLocation::class.java).count()
         Log.e("---------------", "===========> THERE ARE $numCities CITIES STORED IN THE DATABASE")
         return numCities
     }

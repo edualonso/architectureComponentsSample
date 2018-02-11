@@ -11,7 +11,7 @@ import javax.inject.Singleton
  * Created by edu on 24/12/2017.
  */
 @Singleton
-class MemoryWeatherRepository @Inject constructor(): WeatherRepository {
+class MemoryWeatherRepository @Inject constructor() : WeatherRepository {
 
     private val locations = mutableMapOf<String, InternalLocation>()
 
@@ -31,12 +31,15 @@ class MemoryWeatherRepository @Inject constructor(): WeatherRepository {
     }
 
     override fun getLocationRx(location: InternalLocation): Single<WeatherRepository.GetLocationState> {
-
         return Single.create<WeatherRepository.GetLocationState> {
             val searchedLocation = locations[location.name]
             try {
                 if (searchedLocation != null) {
-                    it.onSuccess(WeatherRepository.GetLocationState.Exists(location))
+                    if (searchedLocation.id == location.id) {
+                        it.onSuccess(WeatherRepository.GetLocationState.Exists(location))
+                    } else {
+                        it.onSuccess(WeatherRepository.GetLocationState.NotFound(location))
+                    }
                 } else {
                     it.onSuccess(WeatherRepository.GetLocationState.NotFound(location))
                 }

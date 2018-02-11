@@ -11,6 +11,8 @@ import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
 import com.example.edu.myapplication.network.openweather.OpenWeatherApiClient
 import com.example.edu.myapplication.weather.addlocation.AddLocationInteractor
 import com.example.edu.myapplication.weather.addlocation.AddLocationViewModel
+import com.example.edu.myapplication.weather.addlocation.apixu.ApixuAddLocationInteractor
+import com.example.edu.myapplication.weather.addlocation.openweather.OpenWeatherAddLocationInteractor
 import com.example.edu.myapplication.weather.addlocation.search.LocationAdapter
 import dagger.BindsInstance
 import dagger.Component
@@ -42,10 +44,12 @@ abstract class ApplicationComponent {
     abstract fun inject(baseApplication: BaseApplication)
     abstract fun inject(weatherApiClient: ApixuWeatherApiClient)
     abstract fun inject(openWeatherApiClient: OpenWeatherApiClient)
-    abstract fun inject(mainViewModel: MainViewModel)                       // TODO: can we do this more abstract?
-    abstract fun inject(addLocationViewModel: AddLocationViewModel)         // TODO: can we do this more abstract?
-    abstract fun inject(mainInteractor: MainInteractor)                     // TODO: can we do this more abstract?
-    abstract fun inject(addLocationInteractor: AddLocationInteractor)       // TODO: can we do this more abstract?
-    abstract fun inject(locationAdapter: LocationAdapter)                   // TODO: can we do this more abstract?
+    abstract fun inject(mainViewModel: MainViewModel)
+    abstract fun inject(addLocationViewModel: AddLocationViewModel)
+    abstract fun inject(mainInteractor: MainInteractor)
+    abstract fun inject(addLocationInteractor: AddLocationInteractor)
+    abstract fun inject(apixuAddLocationInteractor: ApixuAddLocationInteractor)
+    abstract fun inject(openWeatherAddLocationInteractor: OpenWeatherAddLocationInteractor)
+    abstract fun inject(locationAdapter: LocationAdapter)
 
 }

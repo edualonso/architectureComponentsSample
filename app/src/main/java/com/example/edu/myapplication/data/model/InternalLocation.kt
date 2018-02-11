@@ -1,6 +1,7 @@
 package com.example.edu.myapplication.data.model
 
 import com.example.edu.myapplication.data.model.apixu.Location
+import com.example.edu.myapplication.data.model.openweather.OpenWeatherLocation
 import com.example.edu.myapplication.data.model.openweather.Sys
 
 /**
@@ -25,6 +26,16 @@ fun Location.toInternalLocation(): InternalLocation {
             country,
             lat,
             lon
+    )
+}
+
+fun OpenWeatherLocation.toInternalLocation(): InternalLocation {
+    return InternalLocation(
+            id,
+            name,
+            country,
+            coord?.lat ?: 0f,
+            coord?.lon ?: 0f
     )
 }
 

@@ -33,7 +33,8 @@ class LocationAdapter @Inject constructor() : RecyclerView.Adapter<LocationAdapt
             root.setOnClickListener {
                 onLocationClicked(locations[position])
             }
-            name.text = locations[position].name + " with ID ${locations[position].id}"
+            val text = locations[position].name + ", ${locations[position].country} with ID ${locations[position].id}"
+            name.text = text
         }
     }
 

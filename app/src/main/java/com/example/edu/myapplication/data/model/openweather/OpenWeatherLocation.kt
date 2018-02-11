@@ -12,7 +12,7 @@ import io.realm.RealmObject
 //        val coord: Coord
 //)
 
-open class Location() : RealmObject() {
+open class OpenWeatherLocation() : RealmObject() {
 
     var id: Long = 0
     var name: String = ""

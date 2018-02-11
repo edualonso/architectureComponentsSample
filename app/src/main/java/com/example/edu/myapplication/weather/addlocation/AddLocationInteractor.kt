@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.edu.myapplication.data.model.InternalLocation
 import com.example.edu.myapplication.data.repository.WeatherRepository
 import com.example.edu.myapplication.data.repository.memory.MemoryWeatherRepository
-import com.example.edu.myapplication.network.apixu.ApixuWeatherApiClient
+import com.example.edu.myapplication.network.WeatherApiClient
 import com.example.edu.myapplication.weather.addlocation.state.SearchForCityState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,8 +16,9 @@ import javax.inject.Inject
  */
 abstract class AddLocationInteractor {
 
-    @Inject lateinit var weatherApiClient: ApixuWeatherApiClient
     @Inject lateinit var weatherRepository: MemoryWeatherRepository
+
+    protected lateinit var weatherApiClient: WeatherApiClient
 
     fun getSearchBoxStateObservable(cityTextChanges: Observable<CharSequence>): Observable<SearchForCityState> {
         return cityTextChanges
